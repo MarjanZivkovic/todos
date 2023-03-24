@@ -71,6 +71,7 @@ function App() {
       </main>
       <footer>
         <p><strong>+</strong> to add a todo, <strong>click</strong> on it to toggle completed, <strong>x</strong> to delete it</p>
+        <p className="created-by">created by <a href="https://marjan-zivkovic.com/" target="_blank" rel="noreferrer">marjan</a></p>
       </footer>
     </div>
   );
