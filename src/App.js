@@ -50,6 +50,7 @@ function App() {
     )
   }
 
+
   return (
     <div className="App">
       <main>
@@ -67,7 +68,7 @@ function App() {
           </ul>
         }
         {openInput && <Form  onCreateToDO={createToDoHandler}  closeForm={closeForm}/>}
-        <Button  onOpenForm={openFormHandler} />                          
+        <Button  onOpenForm={openFormHandler} />                         
       </main>
       <footer>
         <p><strong>+</strong> to add a todo, <strong>click</strong> on it to toggle completed, <strong>x</strong> to delete it</p>
