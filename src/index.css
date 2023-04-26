@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;700;900&display=swap');
 
 :root{
     --primary-background: #f5f5f5;
@@ -59,7 +59,22 @@ ul{
 .main-btn:hover{
     filter: brightness(0.7);
 }
-
+/* filter */
+.filter-div{
+    padding-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.filter-div select{
+    margin-left: 0.5rem;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    border: 0;
+    padding: 0.25rem 0.5rem;
+    font-size: 1.2rem;
+}
+/* form */
 .form-container{
     background-color: rgba(0,0,0,0.3);
     position: fixed;
@@ -87,6 +102,15 @@ ul{
 .form-group input:focus{
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
+.importance-select{
+    padding: 1.5rem 0 2rem;
+    opacity: 0.8;
+}
+.importance-select select{
+    padding: 0.5rem;
+    margin: 0 0.5rem;
+    border: 1px solid var(--primary-color);
+}
 .form-group button{
     padding: 0.5rem 2.5rem;
     background: rgba(0,0,0,0.9);
@@ -105,7 +129,8 @@ ul{
     color: rgba(0,0,0,0.9);
     cursor: auto;
 }
-.todo-ul{
+/* todo list */
+.todo-ul, .filter-div{
     width: calc(100% - 2rem);
     max-width: 45rem;
     margin: auto;
@@ -113,6 +138,7 @@ ul{
 .todo-li{
     background-color: #fff;
     box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    border: 2px dashed transparent;
     margin: 1rem 0;
     padding: 0.5rem 0.5rem 0.5rem 0;
     font-size: 1.2rem;
@@ -121,6 +147,35 @@ ul{
     grid-template-columns: 2rem 1fr 1.5rem 1.5rem;
     justify-content: space-between;
     align-items: center;
+}
+.todo-li:hover{
+    border: 2px dashed var(--primary-color);
+}
+.todo-li.todo-li-a, .todo-li.todo-li-b, .todo-li.todo-li-c{
+    grid-template-columns: 1.5rem 2rem 1fr 1.5rem 1.5rem;
+}
+.todo-li::before{
+    text-align: center;
+    font-weight: 900;
+    margin-left: 0.25rem;
+    padding-right: 0 0.75rem;
+    background-color: var(--primary-color);
+}
+.todo-li.todo-li-a::before{
+    content: 'A';
+}
+.todo-li.todo-li-b::before{
+    content: 'B';
+    font-weight: 600;
+    opacity: 0.8;
+}
+.todo-li.todo-li-c::before{
+    content: 'C';
+    font-weight: 400;
+    opacity: 0.6;
+}
+.drag-start{
+    border: 2px dashed var(--primary-color);
 }
 .check-img{
     max-width: 1rem;

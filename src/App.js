@@ -2,8 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 import { useState, useEffect } from "react";
 import Button from "./components/Button";
 import Form from "./components/Form";
+import Filter from "./components/Filter";
 import check from "./check.svg";
-import { FaTimes, FaEdit } from "react-icons/fa";
+import { FaTimes, FaEdit, FaFilter } from "react-icons/fa";
 
 function App() {
   // fetch todos from LStorage or empty arr
@@ -12,12 +13,17 @@ function App() {
     const initialTodos = JSON.parse(savedTodos);
     return initialTodos || [];
   });
-  // states for open form and edit todos
+  // states for open form, edit todos, filtered todos
   const [ openInput, setOpenInput ] = useState(false);
   const [ todoEdit, setTodoEdit ] = useState({
     todo: {},
     isEdit: false
   });
+  const [ filteredTodos, setFilteredTodos ] = useState('all');
+  // states for drag and drop functionality
+  const [ dragStartIndex, setDragStartIndex ] = useState(null);
+  const [ dragEndIndex, setDragEndIndex ] = useState(null);
+  // const [ draggedOverIndex, setDraggedOverIndex ] = useState(null);
 
   // saving to LS on every state change
   useEffect(() =>{
@@ -32,18 +38,21 @@ function App() {
     setOpenInput(false);
   }
   // create ne todo function
-  function createToDoHandler( createdToDo ){
+  function createToDoHandler( createdToDo, importance ){
     const newToDo ={
       id: uuidv4(),
       name: createdToDo,
-      completed: false
+      completed: false,
+      importance: importance,
     }
     setTodos([newToDo, ...todos]);
     setOpenInput(false);
   }
   // delete to do
   function deleteToDo(id){
-    setTodos(todos.filter((todo) => todo.id !== id ));
+    if(window.confirm('Are you sure you want to delete todo?')){
+      setTodos(todos.filter((todo) => todo.id !== id ));
+    }
   }
 
   // edit todo
@@ -69,8 +78,8 @@ function App() {
   }
 
   // update todos with edited todo
-  function updateTodos(id, updatedTodo){
-    setTodos( todos.map( todo => todo.id === id ? { ...todo, name: updatedTodo }  : todo ) );
+  function updateTodos(id, updatedTodo, importance){
+    setTodos( todos.map( todo => todo.id === id ? { ...todo, name: updatedTodo, importance: importance }  : todo ) );
 
     setOpenInput(false);
 
@@ -78,17 +87,57 @@ function App() {
       todo: {},
       isEdit: false
     });
-}
+  }
+
+  // filter todos
+  function filterToDos( selectedImportance ){
+    setFilteredTodos(selectedImportance);  
+  }
+
+  const selectedToDos = todos.filter( todo =>{
+    if( filteredTodos !== 'all' ){
+      return todo.importance === filteredTodos;
+    } else {
+      return todos;
+    }
+  })
+
+  // drag and drop functionality
+  function handleDragStart(e, index) {
+    setDragStartIndex(index);
+  }
+
+  function handleDragEnter(e, index) {
+    e.preventDefault();
+  }
+
+  function handleDragEnd(e, index) {
+    setDragEndIndex(index);
+  }
+
+  useEffect(() => {
+    if (dragStartIndex !== null && dragEndIndex !== null) {
+      const newTodos = [...todos];
+      const [removedTodo] = newTodos.splice(dragStartIndex, 1);
+      newTodos.splice(dragEndIndex, 0, removedTodo);
+      setTodos(newTodos);
+      setDragStartIndex(null);
+      setDragEndIndex(null);
+    }
+  }, [dragStartIndex, dragEndIndex, todos]);
+
+
 
   return (
     <div className="App">
       <main>
         <h1>my todos</h1>
-        {todos.length === 0 ? <p>Nothing to do yet!</p> : 
+        <Filter filterToDos={filterToDos} selected={filteredTodos} />
+        {selectedToDos.length === 0 ? <p>Nothing to do yet!</p> : 
           <ul className="todo-ul">
-            {todos.map( todo => {
+            {selectedToDos.map( (todo, index)=> {
               return (
-              <li className="todo-li" key={todo.id}>
+              <li className={`todo-li ${todo.importance === 'a' ? 'todo-li-a' : todo.importance === 'b' ? 'todo-li-b' : todo.importance === 'c' ? 'todo-li-c' : ''} ${dragStartIndex ? 'drag-start' : ''}`} key={todo.id} draggable onDragStart={(e) => handleDragStart(e, index)} onDragOver={(e) => handleDragEnter(e, index)} onDrop={(e) => handleDragEnd(e, index)}>
                 <span className="check-img">{todo.completed ? <img src={check} alt="check mark"/> : null}</span>
                 <span className={todo.completed ? 'completed' : ''} onClick={() => toggleCompleteTodo(todo.id)}>{todo.name}</span> 
                 <button onClick={() => editToDo(todo)}><FaEdit /></button>
@@ -101,7 +150,7 @@ function App() {
         <Button  onOpenForm={openFormHandler} />                         
       </main>
       <footer>
-        <p><strong>+</strong> to add a todo, <strong>click</strong> on it to toggle completed, <FaEdit style={{transform: 'translateY(0.15rem)'}}/> to edit it, <FaTimes style={{transform: 'translateY(0.2rem)'}}/> to delete it</p>
+        <p><strong style={{fontSize: '1.35rem'}}>+</strong> to add a todo, <strong>click</strong> on it to toggle completed, <FaEdit style={{transform: 'translateY(0.15rem)'}}/> to edit it, <FaTimes style={{transform: 'translateY(0.2rem)'}}/> to delete it <br /> <FaFilter style={{transform: 'translateY(0.2rem)'}}/> to filter todos, <strong>drag and drop</strong> todos to rearrange them <small>(only in 'all' mode)</small></p>
         <p className="created-by">created by <a href="https://marjan-zivkovic.com/" target="_blank" rel="noreferrer">marjan</a></p>
       </footer>
     </div>
